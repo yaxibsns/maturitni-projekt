@@ -16,6 +16,30 @@ $sql = "SELECT
 
 $vysledek = mysqli_query($pripojeni, $sql);
 
+$sql_prijmy = "SELECT SUM(transactions.amount) AS celkem
+FROM transactions
+JOIN categories ON transactions.category_id = categories.id
+WHERE categories.type = 'income'";
+
+$vysledek_prijmy = mysqli_query($pripojeni, $sql_prijmy);
+$radek_prijmy = mysqli_fetch_assoc($vysledek_prijmy);
+
+$celkove_prijmy = $radek_prijmy["celkem"];
+
+
+$sql_vydaje = "SELECT SUM(transactions.amount) AS celkem
+FROM transactions
+JOIN categories ON transactions.category_id = categories.id
+WHERE categories.type = 'expense'";
+
+$vysledek_vydaje = mysqli_query($pripojeni, $sql_vydaje);
+$radek_vydaje = mysqli_fetch_assoc($vysledek_vydaje);
+
+$celkove_vydaje = $radek_vydaje["celkem"];
+
+
+$zustatek = $celkove_prijmy - $celkove_vydaje;
+
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +47,13 @@ $vysledek = mysqli_query($pripojeni, $sql);
 <head>
     <meta charset="UTF-8">
     <title>Přehled příjmů a výdajů</title>
+    <h2>Finanční přehled</h2>
+
+<p>Celkové příjmy: <?php echo $celkove_prijmy; ?> Kč</p>
+
+<p>Celkové výdaje: <?php echo $celkove_vydaje; ?> Kč</p>
+
+<p>Zůstatek: <?php echo $zustatek; ?> Kč</p>
 </head>
 <body>
 
